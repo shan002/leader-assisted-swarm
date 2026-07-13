@@ -10,6 +10,7 @@ The agents follow the same binary sensing rule:
 The leader is controlled manually and is treated like any other detectable agent. The objective is to use the leader to bring the two milling groups together.
 
 **Question 1:** Does the same approach still work when each group contains more than three agents (`n > 3`)?
+
 **Question 2:** After the two milling groups merge, can the leader escape from the combined milling structure?
 
 ## Quickstart
