@@ -14,7 +14,7 @@ The leader is controlled manually and is treated like any other detectable agent
 ## Quickstart
 
 ```bash
-git clone https://github.com/GMU-ASRC/leader-assisted-swarm
+git clone https://github.com/shan002/leader-assisted-swarm
 cd leader-assisted-swarm
 
 uv venv
