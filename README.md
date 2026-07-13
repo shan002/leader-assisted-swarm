@@ -9,6 +9,8 @@ The agents follow the same binary sensing rule:
 
 The leader is controlled manually and is treated like any other detectable agent. The objective is to use the leader to bring the two milling groups together.
 
+**Question:** Does the same approach still work when each group contains more than three agents (`n > 3`)?
+
 ## Quickstart
 
 ```bash
@@ -32,40 +34,3 @@ Depending on your operating system and shell, use the appropriate environment ac
 | bash/zsh   | Linux/macOS | `source .venv/bin/activate`               |
 | Fish       | Linux/macOS | `source .venv/bin/activate.fish`          |
 | NuShell    | Linux/macOS | `overlay use .venv/bin/activate.nu`       |
-
-## Controls
-
-### Arrow keys
-
-Set the leader controller in `world.yaml` to:
-
-```yaml
-controller:
-  type: HumanController
-  joystick: ~
-  keys: arrowkeys
-```
-
-Controls:
-
-* Up: move forward
-* Down: move backward
-* Left: turn left
-* Right: turn right
-
-### Joystick
-
-Connect the joystick before starting the simulation and use:
-
-```yaml
-controller:
-  type: HumanController
-  joystick: 0
-  keys: arrowkeys
-```
-
-`joystick: 0` selects the first connected joystick. The arrow keys remain available as a backup.
-
-```text
-world.yaml
-```
