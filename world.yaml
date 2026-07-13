@@ -1,0 +1,63 @@
+type: "RectangularWorld"
+size: [10, 10]
+timestep: !np 1/50
+
+spawners:
+  # GROUP A
+  - name: "group_A"
+    type: "UniformAgentSpawner"
+    region: [[1, 4], [2, 4], [2, 6], [1, 6]]
+    n: 3
+    facing: "away"
+    avoid_overlap: true
+    mode: "oneshot"
+    agent:
+      type: "MazeAgent"
+      agent_radius: 0.1
+      body_filled: true
+      body_color: [255, 0, 0]
+      sensors:
+        - type: "BinaryFOVSensor"
+          theta: 0.45
+          distance: 1.0
+      controller:
+        type: "BinaryController"
+        a: [0.276, 0.602]  # something detected
+        b: [0.276, -0.602] # nothing detected
+
+
+  # GROUP B
+  - name: "group_B"
+    type: "UniformAgentSpawner"
+    region: [[8, 4], [9, 4], [9, 6], [8, 6]]
+    n: 3
+    facing: "away"
+    avoid_overlap: true
+    mode: "oneshot"
+    agent:
+      type: "MazeAgent"
+      agent_radius: 0.1
+      body_filled: true
+      body_color: [0, 0, 255]
+      sensors:
+        - type: "BinaryFOVSensor"
+          theta: 0.45
+          distance: 1.0
+      controller:
+        type: "BinaryController"
+        a: [0.276, 0.602]  # something detected
+        b: [0.276, -0.602] # nothing detected
+
+
+# HUMAN-CONTROLLED LEADER
+agents:
+  - name: "leader"
+    type: "MazeAgent"
+    agent_radius: 0.1
+    body_filled: true
+    body_color: [0, 255, 0]
+    position: [5, 8]
+    controller:
+      type: "HumanController"
+      joystick: ~
+      keys: "arrowkeys"  # "wasd" or "arrowkeys"
