@@ -23,7 +23,9 @@ The objective is to use the leader to:
 
 ## Simulation
 
-![Leader-assisted swarm simulation](milling_merge.png)
+<p align="center">
+  <img src="milling_merge.png" alt="Leader-assisted swarm simulation" width="700">
+</p>
 
 ## Display
 
@@ -55,9 +57,9 @@ $$
 
 where:
 
-- \(d_{\text{goal}}\) is the distance between the center of the combined group and the end point.
-- \(C\) is the circliness score of the combined group.
-- \(1-C\) is the milling loss.
+- $d_{\text{goal}}$ is the distance between the center of the combined group and the end point.
+- $C$ is the circliness score of the combined group.
+- $1-C$ is the milling loss.
 
 A lower loss is better.
 
