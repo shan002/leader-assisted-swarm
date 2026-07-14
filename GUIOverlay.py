@@ -45,7 +45,6 @@ class GUIOverlay:
         if not agents:
             return None
 
-        # Circliness inherits center_of_mass() from RadialVarianceMetric.
         self.metric.population = agents
         return self.metric.center_of_mass()
 
@@ -82,7 +81,6 @@ class GUIOverlay:
     def update(self):
         step = getattr(self.world, "total_steps", 0)
 
-        # Prevent repeated metric updates during the same simulation step.
         if step == self.last_step:
             return
 
