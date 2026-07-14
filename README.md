@@ -13,12 +13,17 @@ The objective is to use the leader to:
 
 1. Bring the two milling groups together.
 2. Move the combined milling group toward the end point.
+3. Escape from the combined group without breaking the milling structure.
 
 ## Questions
 
 **Question 1:** Does the same approach still work when each group contains more than three agents (`n > 3`)?
 
 **Question 2:** After the two milling groups merge, can the leader escape from the combined milling structure?
+
+## Simulation
+
+![Leader-assisted swarm simulation](milling_merge.png)
 
 ## Display
 
@@ -45,14 +50,14 @@ The loss is calculated only after the two groups merge.
 The loss is calculated as:
 
 $$
-J = d_{\text{goal}} + (1 - C)
+J = d_{\text{goal}} + (1-C)
 $$
 
 where:
 
-- $d_{\text{goal}}$ is the distance between the center of the combined group and the end point.
-- $C$ is the circliness score of the combined group.
-- $1-C$ is the milling loss.
+- \(d_{\text{goal}}\) is the distance between the center of the combined group and the end point.
+- \(C\) is the circliness score of the combined group.
+- \(1-C\) is the milling loss.
 
 A lower loss is better.
 
@@ -75,3 +80,25 @@ source .venv/bin/activate
 uv pip install -r requirements.txt
 python run_simulation.py
 ```
+
+Depending on your operating system and shell, use the appropriate environment activation command:
+
+| Shell | OS | Activation command |
+|---|---|---|
+| CMD.exe | Windows | `.\.venv\Scripts\activate` |
+| PowerShell | Windows | `.\.venv\Scripts\activate.ps1` |
+| NuShell | Windows | `overlay use .\.venv\Scripts\activate.nu` |
+| bash/zsh | Linux/macOS | `source .venv/bin/activate` |
+| Fish | Linux/macOS | `source .venv/bin/activate.fish` |
+| NuShell | Linux/macOS | `overlay use .venv/bin/activate.nu` |
+
+## Controls
+
+The leader can be controlled using the arrow keys:
+
+- Up arrow: move forward
+- Down arrow: move backward
+- Left arrow: turn left
+- Right arrow: turn right
+
+Click inside the simulation window if the arrow keys do not respond.
