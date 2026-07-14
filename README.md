@@ -129,9 +129,8 @@ The shape error is:
 Let $\theta_i$ be the heading of agent $i$. The direction from the swarm center to agent $i$ is:
 
 ```math
-\beta_i
-=
-\operatorname{atan2}(y_i-c_y,\ x_i-c_x)
+\beta_i =
+\mathrm{atan2}\left(y_i-c_y,\ x_i-c_x\right)
 ```
 
 The motion error is:
