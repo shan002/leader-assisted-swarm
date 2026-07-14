@@ -47,26 +47,139 @@ The loss is calculated only after the two groups merge.
 
 ## Loss Function
 
-The loss is calculated as:
+Suppose the merged swarm contains $N$ milling agents. The position of agent $i$ is
 
 $$
-J = d_{\text{goal}} + (1-C)
+\mathbf{p}_i =
+\begin{bmatrix}
+x_i \\
+y_i
+\end{bmatrix}.
 $$
 
-where:
+The center of the merged swarm is
 
-- $d_{\text{goal}}$ is the distance between the center of the combined group and the end point.
-- $C$ is the circliness score of the combined group.
-- $1-C$ is the milling loss.
+$$
+\mathbf{c}
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\mathbf{p}_i.
+$$
 
-A lower loss is better.
+Let the end point be
 
-The best possible loss is `0`. This means:
+$$
+\mathbf{g} =
+\begin{bmatrix}
+x_g \\
+y_g
+\end{bmatrix}.
+$$
 
-- The center of the combined group is exactly at the end point.
-- The circliness score is `1`.
+The distance between the merged swarm center and the end point is
 
-The simulation displays both the current loss and the minimum loss reached during the run.
+$$
+d_{\text{goal}}
+=
+\left\|
+\mathbf{c}-\mathbf{g}
+\right\|_2
+=
+\sqrt{
+(c_x-x_g)^2+(c_y-y_g)^2
+}.
+$$
+
+For each agent, define its distance from the swarm center as
+
+$$
+r_i
+=
+\left\|
+\mathbf{p}_i-\mathbf{c}
+\right\|_2.
+$$
+
+The smallest and largest distances from the center are
+
+$$
+r_{\min}=\min_i r_i,
+\qquad
+r_{\max}=\max_i r_i.
+$$
+
+The shape error is
+
+$$
+\phi
+=
+1-\frac{r_{\min}^2}{r_{\max}^2}.
+$$
+
+Let $\theta_i$ be the heading of agent $i$. The angle from the swarm center to agent $i$ is
+
+$$
+\beta_i
+=
+\operatorname{atan2}
+\left(
+y_i-c_y,\,
+x_i-c_x
+\right).
+$$
+
+The motion error is
+
+$$
+\tau
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\left|
+\cos(\theta_i-\beta_i)
+\right|.
+$$
+
+The circliness score used by the simulation is
+
+$$
+C
+=
+1-\max(\phi,\tau).
+$$
+
+Therefore, the complete loss is
+
+$$
+\boxed{
+J
+=
+\sqrt{
+(c_x-x_g)^2+(c_y-y_g)^2
+}
++
+\max
+\left(
+1-\frac{r_{\min}^2}{r_{\max}^2},
+\frac{1}{N}
+\sum_{i=1}^{N}
+\left|
+\cos(\theta_i-\beta_i)
+\right|
+\right)
+}
+$$
+
+The leader is not included in these calculations. Only the milling agents are used.
+
+A lower loss is better. The best possible loss is `0`, which means:
+
+- The center of the merged swarm is exactly at the end point.
+- All agents are approximately the same distance from the swarm center.
+- All agents are moving tangentially around the swarm center.
+
+The loss is calculated only after the two groups merge. The simulation displays both the current loss and the minimum loss reached during the run.
 
 ## Quickstart
 
