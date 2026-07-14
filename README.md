@@ -13,7 +13,6 @@ The objective is to use the leader to:
 
 1. Bring the two milling groups together.
 2. Move the combined milling group toward the end point.
-3. Escape from the combined group without breaking the milling structure.
 
 ## Questions
 
@@ -51,9 +50,9 @@ $$
 
 where:
 
-- \(d_{\text{goal}}\) is the distance between the center of the combined group and the end point.
-- \(C\) is the circliness score of the combined group.
-- \(1-C\) is the milling loss.
+- $d_{\text{goal}}$ is the distance between the center of the combined group and the end point.
+- $C$ is the circliness score of the combined group.
+- $1-C$ is the milling loss.
 
 A lower loss is better.
 
