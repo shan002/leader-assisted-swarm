@@ -23,9 +23,7 @@ The objective is to use the leader to:
 
 ## Simulation
 
-<p align="center">
-  <img src="milling_merge.png" alt="Leader-assisted swarm simulation" width="700">
-</p>
+![Leader-assisted swarm simulation](milling_merge.png)
 
 ## Display
 
