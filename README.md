@@ -47,120 +47,129 @@ The loss is calculated only after the two groups merge.
 
 ## Loss Function
 
-Suppose the merged swarm contains $N$ milling agents. The position of agent $i$ is
+Suppose the merged swarm contains $N$ milling agents. The position of agent $i$ is:
 
-$$
+```math
 \mathbf{p}_i =
 \begin{bmatrix}
 x_i \\
 y_i
-\end{bmatrix}.
-$$
+\end{bmatrix}
+```
 
-The center of the merged swarm is
+The center of the merged swarm is:
 
-$$
+```math
 \mathbf{c}
 =
 \frac{1}{N}
 \sum_{i=1}^{N}
-\mathbf{p}_i.
-$$
+\mathbf{p}_i
+=
+\begin{bmatrix}
+c_x \\
+c_y
+\end{bmatrix}
+```
 
-Let the end point be
+Therefore:
 
-$$
+```math
+c_x = \frac{1}{N}\sum_{i=1}^{N}x_i,
+\qquad
+c_y = \frac{1}{N}\sum_{i=1}^{N}y_i
+```
+
+Let the end point be:
+
+```math
 \mathbf{g} =
 \begin{bmatrix}
 x_g \\
 y_g
-\end{bmatrix}.
-$$
+\end{bmatrix}
+```
 
-The distance between the merged swarm center and the end point is
+The distance between the center of the merged swarm and the end point is:
 
-$$
-d_{\text{goal}}
+```math
+d_{\mathrm{goal}}
 =
-\left\|
-\mathbf{c}-\mathbf{g}
-\right\|_2
+\left\|\mathbf{c}-\mathbf{g}\right\|_2
 =
-\sqrt{
-(c_x-x_g)^2+(c_y-y_g)^2
-}.
-$$
+\sqrt{(c_x-x_g)^2+(c_y-y_g)^2}
+```
 
-For each agent, define its distance from the swarm center as
+For each agent, define its distance from the swarm center as:
 
-$$
+```math
 r_i
 =
-\left\|
-\mathbf{p}_i-\mathbf{c}
-\right\|_2.
-$$
+\left\|\mathbf{p}_i-\mathbf{c}\right\|_2
+=
+\sqrt{(x_i-c_x)^2+(y_i-c_y)^2}
+```
 
-The smallest and largest distances from the center are
+The smallest and largest distances from the swarm center are:
 
-$$
+```math
 r_{\min}=\min_i r_i,
 \qquad
-r_{\max}=\max_i r_i.
-$$
+r_{\max}=\max_i r_i
+```
 
-The shape error is
+The shape error is:
 
-$$
+```math
 \phi
 =
-1-\frac{r_{\min}^2}{r_{\max}^2}.
-$$
+1-\frac{r_{\min}^2}{r_{\max}^2}
+```
 
-Let $\theta_i$ be the heading of agent $i$. The angle from the swarm center to agent $i$ is
+Let $\theta_i$ be the heading of agent $i$. The direction from the swarm center to agent $i$ is:
 
-$$
+```math
 \beta_i
 =
-\operatorname{atan2}
-\left(
-y_i-c_y,\,
-x_i-c_x
-\right).
-$$
+\operatorname{atan2}(y_i-c_y,\ x_i-c_x)
+```
 
-The motion error is
+The motion error is:
 
-$$
+```math
 \tau
 =
 \frac{1}{N}
 \sum_{i=1}^{N}
 \left|
 \cos(\theta_i-\beta_i)
-\right|.
-$$
+\right|
+```
 
-The circliness score used by the simulation is
+The circliness score is:
 
-$$
+```math
 C
 =
-1-\max(\phi,\tau).
-$$
+1-\max(\phi,\tau)
+```
 
-Therefore, the complete loss is
+The loss is:
 
-$$
-\boxed{
+```math
 J
 =
-\sqrt{
-(c_x-x_g)^2+(c_y-y_g)^2
-}
+d_{\mathrm{goal}}+(1-C)
+```
+
+Expanding both $d_{\mathrm{goal}}$ and $C$, the complete loss is:
+
+```math
+J
+=
+\sqrt{(c_x-x_g)^2+(c_y-y_g)^2}
 +
-\max
-\left(
+\max\left(
 1-\frac{r_{\min}^2}{r_{\max}^2},
 \frac{1}{N}
 \sum_{i=1}^{N}
@@ -168,16 +177,15 @@ J
 \cos(\theta_i-\beta_i)
 \right|
 \right)
-}
-$$
+```
 
-The leader is not included in these calculations. Only the milling agents are used.
+The leader is not included in the loss calculation. Only the milling agents are used.
 
 A lower loss is better. The best possible loss is `0`, which means:
 
-- The center of the merged swarm is exactly at the end point.
-- All agents are approximately the same distance from the swarm center.
-- All agents are moving tangentially around the swarm center.
+- The center of the merged swarm is at the end point.
+- The agents are equally spaced from the swarm center.
+- The agents move tangentially around the swarm center.
 
 The loss is calculated only after the two groups merge. The simulation displays both the current loss and the minimum loss reached during the run.
 
