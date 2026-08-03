@@ -1,18 +1,25 @@
 type: "RectangularWorld"
 size: [10, 10]
-timestep: !np 1/50
+time_step: !np 1/50
+seed: 1
+
+metadata:
+  start: [1.5, 5.0]
+  target: [8.0, 5.0]
+  # Finalize automatically when the current score reaches this value or lower.
+  stop_score: 0.2
 
 spawners:
-  # GROUP A
-  - name: "group_A"
+  - name: "defender_swarm"
     type: "UniformAgentSpawner"
     region: [[1, 4], [2, 4], [2, 6], [1, 6]]
-    n: 3
+    n: 6
     facing: "away"
     avoid_overlap: true
     mode: "oneshot"
     agent:
       type: "MazeAgent"
+      team: "defender"
       agent_radius: 0.1
       body_filled: true
       body_color: [255, 0, 0]
@@ -22,42 +29,24 @@ spawners:
           distance: 1.0
       controller:
         type: "BinaryController"
-        a: [0.276, 0.602]  # something detected
-        b: [0.276, -0.602] # nothing detected
+        a: [0.276, 0.602]
+        b: [0.276, -0.602]
 
-
-  # GROUP B
-  - name: "group_B"
+  - name: "leader_spawner"
     type: "UniformAgentSpawner"
-    region: [[8, 4], [9, 4], [9, 6], [8, 6]]
-    n: 3
+    region: [[1, 4], [2, 4], [2, 6], [1, 6]]
+    n: 1
     facing: "away"
     avoid_overlap: true
     mode: "oneshot"
     agent:
+      name: "leader"
       type: "MazeAgent"
+      team: "leader"
       agent_radius: 0.1
       body_filled: true
-      body_color: [0, 0, 255]
-      sensors:
-        - type: "BinaryFOVSensor"
-          theta: 0.45
-          distance: 1.0
+      body_color: [0, 255, 0]
       controller:
-        type: "BinaryController"
-        a: [0.276, 0.602]  # something detected
-        b: [0.276, -0.602] # nothing detected
-
-
-# HUMAN-CONTROLLED LEADER
-agents:
-  - name: "leader"
-    type: "MazeAgent"
-    agent_radius: 0.1
-    body_filled: true
-    body_color: [0, 255, 0]
-    position: [5, 8]
-    controller:
-      type: "HumanController"
-      joystick: ~
-      keys: "arrowkeys"  # "wasd" or "arrowkeys"
+        type: "LeaderController"
+        max_speed: 0.1
+        max_turn_rate: 1.5

@@ -1,207 +1,56 @@
 # leader-assisted-swarm
 
-This repository contains a simulation with two initially separated milling swarms and one human-controlled leader.
+This is a programming challenge. The green leader must move a milling
+swarm from the cyan start point to the red target.
 
-The agents follow the same binary sensing rule:
+The swarm agents have the same simple sensor used in our binary milling:
 
-- If another agent is detected, perform action `a`.
-- If nothing is detected, perform action `b`.
+- If an agent is detected, they perform action `a`.
+- If nothing is detected, they perform action `b`.
 
-The leader is controlled manually and is treated like any other detectable agent.
+The swarm agents should not be changed. You should control only the leader.
 
-The objective is to use the leader to:
+## Task
 
-1. Bring the two milling groups together.
-2. Move the combined milling group toward the end point.
-3. Escape from the combined group without breaking the milling structure.
+Edit only `leader_controller.py`. Do not rename the file or the
+`LeaderController` class.
 
-## Questions
+The controller must return the leader's forward speed and turning speed:
 
-**Question 1:** Does the same approach still work when each group contains more than three agents (`n > 3`)?
-
-**Question 2:** After the two milling groups merge, can the leader escape from the combined milling structure?
-
-## Simulation
-
-![Leader-assisted swarm simulation](milling_merge.png)
-
-## Display
-
-The simulation shows:
-
-- A red center marker for Group A
-- A blue center marker for Group B
-- One yellow center marker after the groups merge
-- A white marker for the final end point
-- Whether the groups are separate or merged
-- The current loss
-- The minimum loss reached during the run
-- The distance from the combined group center to the end point
-- The circliness score
-
-Before the two groups merge, the simulation shows two separate center markers.
-
-After the groups merge, the two markers are replaced by one combined center marker.
-
-The loss is calculated only after the two groups merge.
-
-## Loss Function
-
-Suppose the merged swarm contains $N$ milling agents. The position of agent $i$ is:
-
-```math
-\mathbf{p}_i =
-\begin{bmatrix}
-x_i \\
-y_i
-\end{bmatrix}
+```python
+def get_actions(self, agent):
+    return linear_velocity, angular_velocity
 ```
 
-The center of the merged swarm is:
+The controller can read the leader, swarm, and target information through
+`agent`:
 
-```math
-\mathbf{c}
-=
-\frac{1}{N}
-\sum_{i=1}^{N}
-\mathbf{p}_i
-=
-\begin{bmatrix}
-c_x \\
-c_y
-\end{bmatrix}
+```python
+agent.pos
+agent.angle
+agent.world.population
+agent.world.meta["target"]
 ```
 
-Therefore:
+The defenders can be selected with:
 
-```math
-c_x = \frac{1}{N}\sum_{i=1}^{N}x_i,
-\qquad
-c_y = \frac{1}{N}\sum_{i=1}^{N}y_i
+```python
+defenders = [other for other in agent.world.population if other.team == "defender"]
 ```
 
-Let the end point be:
+The leader must influence the swarm only by moving. Do not directly change an
+agent's position, heading, sensor, controller, or the scoring values.
 
-```math
-\mathbf{g} =
-\begin{bmatrix}
-x_g \\
-y_g
-\end{bmatrix}
-```
-
-The distance between the center of the merged swarm and the end point is:
-
-```math
-d_{\mathrm{goal}}
-=
-\left\|\mathbf{c}-\mathbf{g}\right\|_2
-=
-\sqrt{(c_x-x_g)^2+(c_y-y_g)^2}
-```
-
-For each agent, define its distance from the swarm center as:
-
-```math
-r_i
-=
-\left\|\mathbf{p}_i-\mathbf{c}\right\|_2
-=
-\sqrt{(x_i-c_x)^2+(y_i-c_y)^2}
-```
-
-The smallest and largest distances from the swarm center are:
-
-```math
-r_{\min}=\min_i r_i,
-\qquad
-r_{\max}=\max_i r_i
-```
-
-The shape error is:
-
-```math
-\phi
-=
-1-\frac{r_{\min}^2}{r_{\max}^2}
-```
-
-Let $\theta_i$ be the heading of agent $i$. The direction from the swarm center to agent $i$ is:
-
-```math
-\beta_i =
-\mathrm{atan2}\left(y_i-c_y,\ x_i-c_x\right)
-```
-
-The motion error is:
-
-```math
-\tau
-=
-\frac{1}{N}
-\sum_{i=1}^{N}
-\left|
-\cos(\theta_i-\beta_i)
-\right|
-```
-
-The circliness score is:
-
-```math
-C
-=
-1-\max(\phi,\tau)
-```
-
-The loss is:
-
-```math
-J
-=
-d_{\mathrm{goal}}+(1-C)
-```
-
-Expanding both $d_{\mathrm{goal}}$ and $C$, the complete loss is:
-
-```math
-J
-=
-\sqrt{(c_x-x_g)^2+(c_y-y_g)^2}
-+
-\max\left(
-1-\frac{r_{\min}^2}{r_{\max}^2},
-\frac{1}{N}
-\sum_{i=1}^{N}
-\left|
-\cos(\theta_i-\beta_i)
-\right|
-\right)
-```
-
-The leader is not included in the loss calculation. Only the milling agents are used.
-
-A lower loss is better. The best possible loss is `0`, which means:
-
-- The center of the merged swarm is at the end point.
-- The agents are equally spaced from the swarm center.
-- The agents move tangentially around the swarm center.
-
-The loss is calculated only after the two groups merge. The simulation displays both the current loss and the minimum loss reached during the run.
-
-## Quickstart
+## Run
 
 ```bash
-git clone https://github.com/shan002/leader-assisted-swarm
-cd leader-assisted-swarm
-
 uv venv
 source .venv/bin/activate
-
 uv pip install -r requirements.txt
 python run_simulation.py
 ```
 
-Depending on your operating system and shell, use the appropriate environment activation command:
+Use the activation command for your shell:
 
 | Shell | OS | Activation command |
 |---|---|---|
@@ -212,13 +61,44 @@ Depending on your operating system and shell, use the appropriate environment ac
 | Fish | Linux/macOS | `source .venv/bin/activate.fish` |
 | NuShell | Linux/macOS | `overlay use .venv/bin/activate.nu` |
 
-## Controls
+To open the simulation paused:
 
-The leader can be controlled using the arrow keys:
+```bash
+python run_simulation.py --start_paused
+```
 
-- Up arrow: move forward
-- Down arrow: move backward
-- Left arrow: turn left
-- Right arrow: turn right
+Controls:
 
-Click inside the simulation window if the arrow keys do not respond.
+- Space: pause or continue.
+- Enter: finalize the current score.
+- Q: close the simulation after finalizing.
+
+The simulation also finalizes automatically when the score reaches the
+`stop_score` in `world.yaml`.
+
+## Score
+
+```text
+score = distance from swarm center to target + (1 - circliness)
+```
+
+Circliness is close to `1` when the agents form a circular mill and move around
+its center. A lower score is better. The leader is not included in the score.
+
+The display shows the current score and the lowest score reached during the
+run. The final score is recorded when Enter is pressed or when `stop_score` is
+reached. Time is measured in simulation time, so results are the same on
+different computers.
+
+## Submit
+
+Post:
+
+```text
+Time:
+Score:
+Final step:
+```
+
+Also attach `leader_controller.py`. The result will be checked by running that file
+with the unchanged `world.yaml`.
