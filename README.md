@@ -78,6 +78,9 @@ The simulation also finalizes automatically when the score reaches the
 
 ## Score
 
+The score is calculated as a loss, so a lower score is better. The best
+possible score is `0`.
+
 ```text
 score = distance from swarm center to target + (1 - circliness)
 ```
@@ -89,6 +92,8 @@ The display shows the current score and the lowest score reached during the
 run. The final score is recorded when Enter is pressed or when `stop_score` is
 reached. Time is measured in simulation time, so results are the same on
 different computers.
+
+For a detailed derivation of the loss function, see the [main branch documentation](https://github.com/shan002/leader-assisted-swarm/blob/main/README.md#loss-function).
 
 ## Submit
 
