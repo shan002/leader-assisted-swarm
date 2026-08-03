@@ -41,11 +41,14 @@ defenders = [other for other in agent.world.population if other.team == "defende
 The leader must influence the swarm only by moving. Do not directly change an
 agent's position, heading, sensor, controller, or the scoring values.
 
-## Run
+## Quickstart
 
 ```bash
+git clone --branch automated-leader-challenge --single-branch https://github.com/shan002/leader-assisted-swarm.git
+cd leader-assisted-swarm
+
 uv venv
-source .venv/bin/activate
+.venv\Scripts\activate
 uv pip install -r requirements.txt
 python run_simulation.py
 ```
