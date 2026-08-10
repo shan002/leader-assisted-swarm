@@ -110,14 +110,13 @@ protected point.
 
 ## Submit
 
-Post your result and attach `leader_controller.py`:
+Post your result after running `evaluation.py` and attach `leader_controller.py`:
 
 ```text
-Outcome:
-Time:
-Score:
-Circliness:
-Final step:
+Runs:
+Caught:
+Catch rate:
+Average score:
 ```
 
 The result will be checked using the unchanged `world.yaml` with the base seed `1` of `evaluation.py`.
