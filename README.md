@@ -1,6 +1,6 @@
 # leader-assisted evader capture
 
-This project is a programming challenge. A blue evader starts at a random
+This is a programming challenge. A blue evader starts at a random
 point on the far-right side and moves in a straight line toward the red
 protected point on the left. The green leader must guide the milling swarm so
 that a defender touches the evader
@@ -79,7 +79,9 @@ Pass a different number of runs if needed:
 python evaluate.py 20
 ```
 
-Evaluation uses base seed `1` by default. Keep this unchanged to compare your scores. To use another base seed:
+Evaluation uses base seed `1` by default. Keep this unchanged to compare your score with others. 
+
+To use another base seed:
 
 ```bash
 python evaluate.py 20 --seed 42
@@ -115,4 +117,4 @@ Circliness:
 Final step:
 ```
 
-The result will be checked using the unchanged `world.yaml`.
+The result will be checked using the unchanged `world.yaml` with the base seed `1` of `evaluation.py`.
