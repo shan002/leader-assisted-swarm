@@ -35,8 +35,11 @@ an agent's position, heading, sensor, controller, or the scoring values.
 ## Run
 
 ```bash
+git clone --branch beeline-evader-detection --single-branch https://github.com/shan002/leader-assisted-swarm.git
+cd leader-assisted-swarm
+
 uv venv
-source .venv/bin/activate
+.venv\Scripts\activate
 uv pip install -r requirements.txt
 python run_simulation.py
 ```
