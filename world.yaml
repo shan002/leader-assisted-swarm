@@ -4,15 +4,30 @@ time_step: !np 1/50
 seed: 1
 
 metadata:
-  start: [1.5, 5.0]
-  target: [8.0, 5.0]
-  # Finalize automatically when the current score reaches this value or lower.
-  stop_score: 0.2
+  protected_point: [1.0, 5.0]
+  protected_radius: 0.2
 
 spawners:
+  - name: "evader_spawner"
+    type: "ProtectedPointSpawner"
+    region: [[8.8, 1.0], [9.2, 1.0], [9.2, 9.0], [8.8, 9.0]]
+    n: 1
+    avoid_overlap: true
+    mode: "oneshot"
+    agent:
+      name: "evader"
+      type: "MazeAgent"
+      team: "evader"
+      agent_radius: 0.1
+      body_filled: true
+      body_color: [0, 100, 255]
+      controller:
+        type: "StaticController"
+        output: [0.08, 0.0]
+
   - name: "defender_swarm"
     type: "UniformAgentSpawner"
-    region: [[1, 4], [2, 4], [2, 6], [1, 6]]
+    region: [[4, 1], [6, 1], [6, 3], [4, 3]]
     n: 6
     facing: "away"
     avoid_overlap: true
@@ -29,12 +44,13 @@ spawners:
           distance: 1.0
       controller:
         type: "BinaryController"
+        sensor_id: 0
         a: [0.276, 0.602]
         b: [0.276, -0.602]
 
   - name: "leader_spawner"
     type: "UniformAgentSpawner"
-    region: [[1, 4], [2, 4], [2, 6], [1, 6]]
+    region: [[4, 1], [6, 1], [6, 3], [4, 3]]
     n: 1
     facing: "away"
     avoid_overlap: true

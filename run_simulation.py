@@ -1,21 +1,31 @@
-"""Run and score the automated leader challenge."""
+"""Run and score the leader-assisted evader capture challenge."""
 
 import argparse
+import secrets
 
 import pygame
 
 from swarmsim import register_dictlike_type
 from swarmsim.world.RectangularWorld import RectangularWorld, RectangularWorldConfig
 from swarmsim.world.simulate import main as simulate
+from swarmsim.world.spawners.AgentSpawner import UniformAgentSpawner
 
 from GUIOverlay import add_gui_overlay
 from leader_controller import LeaderController
 from scoring import ChallengeScore
 
 
-def build_world():
+class ProtectedPointSpawner(UniformAgentSpawner):
+    def set_angle_post_spawn(self, agent):
+        agent.angle = self.angle_between(agent.pos, self.world.meta["protected_point"])
+
+
+def build_world(seed=None):
     register_dictlike_type("controller", "LeaderController", LeaderController)
+    register_dictlike_type("spawners", "ProtectedPointSpawner", ProtectedPointSpawner)
     config = RectangularWorldConfig.from_yaml("world.yaml")
+    if seed is not None:
+        config.seed = seed
     world = RectangularWorld(config)
     score = world.add_metric(ChallengeScore())
     add_gui_overlay(world, score)
@@ -27,19 +37,21 @@ def print_result(world, score):
         return "--" if value is None else f"{value:.4f}"
 
     print()
-    print("AUTOMATED LEADER CHALLENGE")
+    print("LEADER-ASSISTED EVADER CAPTURE")
+    print(f"Seed: {world.config.seed}")
     if score.finalized:
-        print("Status: FINALIZED")
-        print(f"Time: {score.completion_time:.2f} simulation seconds")
+        print(f"Status: {score.outcome}")
+        print(f"Time: {score.final_time:.2f} simulation seconds")
         print(f"Score: {score.final_score:.4f}")
-        print(f"Minimum score: {score.minimum_score:.4f}")
-        print(f"Final step: {score.completion_step}")
+        print(f"Circliness: {score.circliness:.4f}")
+        print(f"Final step: {score.final_step}")
+        if score.catcher_name is not None:
+            print(f"Caught by: defender {score.catcher_name}")
     else:
         print("Status: CLOSED WITHOUT FINALIZING")
         print(f"Time: {world.total_steps * world.dt:.2f} simulation seconds")
-        print(f"Final distance: {number(score.target_distance)}")
+        print(f"Evader distance: {number(score.evader_distance)}")
         print(f"Final circliness: {number(score.circliness)}")
-        print(f"Minimum score: {number(score.minimum_score)}")
 
 
 def add_challenge_controls(world, score, start_paused=False):
@@ -56,10 +68,10 @@ def add_challenge_controls(world, score, start_paused=False):
         if event.key == pygame.K_SPACE:
             control_state["paused"] = not control_state["paused"]
             control_state["pause_requested"] = False
-        elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
-            score.finalize()
-            request_pause()
         elif event.key == pygame.K_q:
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
+        elif event.key == pygame.K_r and score.finalized:
+            control_state["restart"] = True
             pygame.event.post(pygame.event.Event(pygame.QUIT))
         else:
             original_handle_key_press(event)
@@ -71,26 +83,32 @@ def add_challenge_controls(world, score, start_paused=False):
             request_pause()
         return False
 
-    return keep_window_open
+    control_state["restart"] = False
+    return keep_window_open, control_state
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run the automated leader challenge.")
+    parser = argparse.ArgumentParser(description="Run the leader-assisted evader capture challenge.")
     parser.add_argument("--start_paused", action="store_true", help="open the simulation in a paused state")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    world, score = build_world()
-    keep_window_open = add_challenge_controls(world, score, start_paused=args.start_paused)
-    simulate(
-        world,
-        stop_detection=keep_window_open,
-        start_paused=args.start_paused,
-        world_key_events=True,
-    )
-    print_result(world, score)
+    seed = secrets.randbits(31)
+    while True:
+        world, score = build_world(seed)
+        keep_window_open, control_state = add_challenge_controls(world, score, start_paused=args.start_paused)
+        simulate(
+            world,
+            stop_detection=keep_window_open,
+            start_paused=args.start_paused,
+            world_key_events=True,
+        )
+        print_result(world, score)
+        if not control_state["restart"]:
+            break
+        seed = (seed + 1) % (2 ** 31)
 
 
 if __name__ == "__main__":

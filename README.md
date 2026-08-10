@@ -1,45 +1,36 @@
-# leader-assisted-swarm
+# leader-assisted evader capture
 
-This is a programming challenge. The green leader must move a milling
-swarm from the cyan start point to the red target.
+This project is a programming challenge. A blue evader starts at a random
+point on the far-right side and moves in a straight line toward the red
+protected point on the left. The green leader must guide the milling swarm so
+that a defender touches the evader
+before it reaches the protected point.
 
-The swarm agents have the same simple sensor used in our binary milling:
+The defenders keep their existing binary sensing rule:
 
-- If an agent is detected, they perform action `a`.
-- If nothing is detected, they perform action `b`.
-
-The swarm agents should not be changed. You should control only the leader.
+- If an agent is detected, perform action `a`.
+- If nothing is detected, perform action `b`.
 
 ## Task
 
 Edit only `leader_controller.py`. Do not rename the file or the
 `LeaderController` class.
 
-The controller must return the leader's forward speed and turning speed:
+The controller must return the leader's forward and turning speeds:
 
 ```python
 def get_actions(self, agent):
     return linear_velocity, angular_velocity
 ```
 
-The controller can read the leader, swarm, and target information through
-`agent`:
+The evader can be found with:
 
 ```python
-agent.pos
-agent.angle
-agent.world.population
-agent.world.meta["target"]
+evader = next(other for other in agent.world.population if other.team == "evader")
 ```
 
-The defenders can be selected with:
-
-```python
-defenders = [other for other in agent.world.population if other.team == "defender"]
-```
-
-The leader must influence the swarm only by moving. Do not directly change an
-agent's position, heading, sensor, controller, or the scoring values.
+The leader must influence the defenders only by moving. Do not directly change
+an agent's position, heading, sensor, controller, or the scoring values.
 
 ## Run
 
@@ -61,7 +52,7 @@ Use the activation command for your shell:
 | Fish | Linux/macOS | `source .venv/bin/activate.fish` |
 | NuShell | Linux/macOS | `overlay use .venv/bin/activate.nu` |
 
-To open the simulation paused:
+To start paused:
 
 ```bash
 python run_simulation.py --start_paused
@@ -70,35 +61,58 @@ python run_simulation.py --start_paused
 Controls:
 
 - Space: pause or continue.
-- Enter: finalize the current score.
-- Q: close the simulation after finalizing.
+- R: start a new run after the result is shown.
+- Q: quit.
 
-The simulation also finalizes automatically when the score reaches the
-`stop_score` in `world.yaml`.
+Each run uses a different seed. The current seed is shown on the screen and in
+the terminal output.
+
+To evaluate the controller over 10 runs without opening the GUI:
+
+```bash
+python evaluate.py
+```
+
+Pass a different number of runs if needed:
+
+```bash
+python evaluate.py 20
+```
+
+Evaluation uses base seed `1` by default. Keep this unchanged to compare your scores. To use another base seed:
+
+```bash
+python evaluate.py 20 --seed 42
+```
 
 ## Score
 
+If a defender touches the evader:
+
 ```text
-score = distance from swarm center to target + (1 - circliness)
+score = capture time + (1 - circliness)
 ```
 
-Circliness is close to `1` when the agents form a circular mill and move around
-its center. A lower score is better. The leader is not included in the score.
+If the evader reaches the protected point without being caught:
 
-The display shows the current score and the lowest score reached during the
-run. The final score is recorded when Enter is pressed or when `stop_score` is
-reached. Time is measured in simulation time, so results are the same on
-different computers.
+```text
+score = evader arrival time + 2
+```
+
+Lower is better. A successful capture always scores better than a miss. The
+simulation ends automatically on capture or when the evader reaches the
+protected point.
 
 ## Submit
 
-Post:
+Post your result and attach `leader_controller.py`:
 
 ```text
+Outcome:
 Time:
 Score:
+Circliness:
 Final step:
 ```
 
-Also attach `leader_controller.py`. The result will be checked by running that file
-with the unchanged `world.yaml`.
+The result will be checked using the unchanged `world.yaml`.

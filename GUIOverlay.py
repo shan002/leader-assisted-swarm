@@ -7,7 +7,6 @@ from swarmsim.gui.agentGUI import get_font
 
 
 GOLD = (255, 215, 0)
-CYAN = (0, 210, 255)
 RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 
@@ -40,23 +39,25 @@ class GUIOverlay:
 
     def draw_panel(self, screen):
         if self.score.finalized:
-            status = "FINALIZED"
-            action_text = "Press Q to exit"
+            status = self.score.outcome
+            action_text = "Press R to restart or Q to quit"
         else:
-            status = "RUNNING"
-            action_text = "Press ENTER for final score"
+            status = "SEARCHING"
+            action_text = "Guide the swarm to the evader"
         lines = [
             f"Status: {status}",
+            f"Seed: {self.world.config.seed}",
             f"Time: {self.score.simulation_time:.2f} s",
-            f"Current score: {self.number(self.score.value)}",
-            f"Minimum score: {self.number(self.score.minimum_score)}",
             f"Final score: {self.number(self.score.final_score)}",
-            f"Target distance: {self.number(self.score.target_distance)}",
+            f"Evader distance: {self.number(self.score.evader_distance)}",
+            f"Evader to goal: {self.number(self.score.evader_goal_distance)}",
             f"Circliness: {self.number(self.score.circliness)}",
-            f"Auto-stop score: {self.number(self.score.automatic_stop_score)}",
+            f"Evader caught: {'YES' if self.score.caught else 'NO'}",
             action_text,
         ]
-        legend = [(CYAN, "Start"), (RED, "Target"), (GOLD, "Swarm centroid")]
+        if self.score.catcher_name is not None:
+            lines.insert(-1, f"Caught by: defender {self.score.catcher_name}")
+        legend = [(RED, "Protected point"), (GOLD, "Swarm centroid")]
 
         row_height = self.font.get_linesize()
         padding = 10
@@ -91,8 +92,7 @@ class GUIOverlay:
         if self.font is None:
             self.font = get_font("JetBrainsMono-SemiBold.ttf", 14)
 
-        self.draw_world_symbol(screen, self.score.start, CYAN, radius=9)
-        self.draw_world_symbol(screen, self.score.target, RED, radius=9)
+        self.draw_world_symbol(screen, self.score.protected_point, RED, radius=9)
         self.draw_world_symbol(screen, self.score.centroid, GOLD)
         self.draw_panel(screen)
 
