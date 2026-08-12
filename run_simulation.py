@@ -90,12 +90,13 @@ def add_challenge_controls(world, score, start_paused=False):
 def parse_args():
     parser = argparse.ArgumentParser(description="Run the leader-assisted evader capture challenge.")
     parser.add_argument("--start_paused", action="store_true", help="open the simulation in a paused state")
+    parser.add_argument("--seed", type=int, help="seed for the first run (default: random)")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    seed = secrets.randbits(31)
+    seed = secrets.randbits(31) if args.seed is None else args.seed
     while True:
         world, score = build_world(seed)
         keep_window_open, control_state = add_challenge_controls(world, score, start_paused=args.start_paused)

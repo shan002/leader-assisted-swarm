@@ -1,6 +1,7 @@
 """Evaluate the leader controller over multiple headless runs."""
 
 import argparse
+import random
 
 import numpy as np
 
@@ -12,7 +13,9 @@ def evaluate(runs, first_seed):
     catches = 0
 
     for run in range(runs):
-        seed = (first_seed + run) % (2 ** 31)
+        seed = first_seed + run
+        random.seed(seed)
+        np.random.seed(seed)
         world, score = build_world(seed)
         world.setup()
         while not score.finalized:

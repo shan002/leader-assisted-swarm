@@ -70,6 +70,12 @@ Controls:
 Each run uses a different seed. The current seed is shown on the screen and in
 the terminal output.
 
+To reproduce a run with a specific starting seed:
+
+```bash
+python run_simulation.py --seed 42
+```
+
 To evaluate the controller over 10 runs without opening the GUI:
 
 ```bash
